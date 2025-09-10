@@ -1,0 +1,6 @@
+{
+  "editor.formatOnSave": true,
+  "[ejs]": {
+    "editor.defaultFormatter": "j69.ejs-beautify"
+  }
+}
