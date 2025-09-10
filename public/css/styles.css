@@ -11,6 +11,8 @@
 
 body {
   margin: 0 auto;
+  background: #fff;      
+  color: #111;   
 }
 
 /********** Global Styles **********/
@@ -23,6 +25,7 @@ html, body {
   margin: 0 auto;
   background-color: white;
   padding: 16px;
+  color: #111;
 }
 
 /* header styles */
@@ -59,6 +62,8 @@ a {
   border-top: 1px solid #1f2937;
   border-bottom: 1px solid #1f2937;
   height: 55px;
+  background: #fff;
+  color: #111; 
 }
 
 .tabs ul{
@@ -148,11 +153,7 @@ h2 {
 }
 
 .reviews h2{ margin: 0 0 .5rem; }
-.quotes{
-  list-style: none;    
-  margin: 0;
-  padding-left: 0;     
-}
+
 .quotes li{
   color: #374151;
   font-size: .95rem;
@@ -186,11 +187,7 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
   padding-left: 1.25rem;   
   margin: 0;
 }
-.quotes li{
-  font-size: .95rem;
-  line-height: 1.4;
-  margin: .35rem 0;
-}
+
 .upgrades-grid li a{
   background: none;
   padding: 0;
@@ -219,6 +216,8 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #bae6fd;
+  color: #111; 
   box-shadow: inset 0 1px 3px rgba(0,0,0,.08);
 }
 .upgrade-item .thumb img{
