@@ -80,6 +80,18 @@ a {
 
 /* hero image style */
 
+h1 {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left: 30px;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  line-height: 1.2;
+  color: #111827;
+}
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: .5rem;
+}
 .hero { 
   position: relative; 
   overflow: hidden; background: #fff; margin-block: 1rem; }
@@ -152,6 +164,7 @@ a {
 
 .upgrades-grid{
   list-style: none;
+  justify-items: left;
   margin: 0;
   padding: 0;
   display: grid;
@@ -194,7 +207,7 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
 .upgrade-item{
   display: flex;
   flex-direction: column;
-  align-items: left;
+  align-items: center;
   text-align: center;
   
 }
@@ -216,6 +229,7 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
 }
 
 .upgrades-grid li > .upgrade-link{
+  display: inline-block; 
   margin-top: .5rem;
   color: #006b85;
   text-decoration: underline;
@@ -223,7 +237,6 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
   text-decoration-thickness: 2px;
   background: none;
   padding: 0;
-  display: inline;
 }
 .upgrades-grid li > .upgrade-link:hover,
 .upgrades-grid li > .upgrade-link:focus{
@@ -244,9 +257,14 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
 }
 
 .hero-overlay {
-  width: 250px;
+  width: 100%;
+  max-width: 400px;
   max-height: none;
-  height: 275px; 
+  height: 350px; 
+  top: 1rem; 
+  left: 2rem;      
+  right: auto; 
+  bottom: auto;
   
 }
 .btn-img{
@@ -256,9 +274,17 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
 }
   .content-grid{
     display: grid;
-    grid-template-columns: 1fr 1fr;  
+    grid-template-columns: 1fr 1fr;  /* two equal columns */
     gap: 1rem;
     align-items: start;
+  }
+
+  .hero-overlay li{
+    font-size: 30px;      
+  }
+
+  h2 {
+    font-size: 40px;
   }
 
 }
