@@ -11,7 +11,7 @@
 
 body {
   margin: 0 auto;
-  background: #fff;      
+  background: #fff;     
   color: #111;   
 }
 
@@ -21,7 +21,7 @@ html, body {
 }
 
 #wrapper {
-  width: min(100%, 1500px);
+  width: min(100%, 1000px);
   margin: 0 auto;
   background-color: white;
   padding: 16px;
@@ -43,11 +43,11 @@ html, body {
 }
 
 .siteName {
-  font-size: 45px;
+  font-size: 30px;
 }
 
 #tools {
-  font-size: 25px;
+  font-size: 16px;
 }
 
 a {
@@ -62,7 +62,6 @@ a {
   border-top: 1px solid #1f2937;
   border-bottom: 1px solid #1f2937;
   height: 55px;
-  background: #fff;
   color: #111; 
 }
 
@@ -74,12 +73,11 @@ a {
   list-style: none;
   margin: 0;
   padding: .5rem 0;  
-  font-size: 20px;                     
+  font-size: 16px;                     
 }
 
 .tabs a {
   color: white;
-  text-decoration: none;
 
 }
 
@@ -93,13 +91,14 @@ h1 {
   line-height: 1.2;
   color: #111827;
 }
-h2 {
-  font-size: 1.5rem;
+.hero-overlay h2 {
+  font-size: 18px;
   margin-bottom: .5rem;
 }
 .hero { 
   position: relative; 
   overflow: hidden; background: #fff; margin-block: 1rem; }
+
 .hero-img { 
   display: block; 
   width: 100%; 
@@ -110,8 +109,8 @@ h2 {
   top: 1rem; 
   left: 1rem; 
   z-index: 1;
-  max-width: 40%;
-  max-height: 250px;
+  width: 200px;
+  height: 200px;
   background: rgba(255, 255, 255, 0.75); 
   color: skyblue;
   padding: .75rem 1rem; backdrop-filter: blur(2px);
@@ -133,12 +132,10 @@ h2 {
 }
 
 
-.hero-overlay li{
-  font-size: 20px;      
-  line-height: 1.4;         
+.hero-overlay ul li{
+  font-size: 16px;              
   margin: 0.25rem 0;      
 }
-
 .btn-img{
   display: block;
   width: clamp(90px, 28vw, 130px); 
@@ -245,7 +242,7 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
 
 
 
-@media screen and (min-width: 800px) {
+@media screen and (min-width: 700px) {
   body {
   background: url("../images/site/checkerboard.jpg");
   
@@ -253,19 +250,26 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
 #wrapper {
    border-radius: 8px;
   border: solid 5px lightskyblue;
+  margin: 40px auto;
 }
 
 .hero-overlay {
   width: 100%;
-  max-width: 400px;
+  max-width: 300px;
   max-height: none;
-  height: 350px; 
+  height: 250px; 
   top: 1rem; 
   left: 2rem;      
   right: auto; 
   bottom: auto;
   
 }
+
+.hero-overlay h2 {
+  font-size: 30px;
+  margin-bottom: .5rem;
+}
+
 .btn-img{
   display: block;
   width: 200px;
@@ -273,17 +277,25 @@ img, video, canvas, svg { max-width: 100%; height: auto; }
 }
   .content-grid{
     display: grid;
-    grid-template-columns: 1fr 1fr;  /* two equal columns */
+    grid-template-columns: 1fr 1fr;  
     gap: 1rem;
     align-items: start;
   }
 
   .hero-overlay li{
-    font-size: 30px;      
+    font-size: 25px;      
   }
 
-  h2 {
-    font-size: 40px;
-  }
+  .siteName {
+  font-size: 45px;
+}
+
+#tools {
+  font-size: 25px;
+}
+
+.tabs ul{
+  font-size: 20px;
+}
 
 }
