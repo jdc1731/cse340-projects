@@ -28,6 +28,24 @@ app.use(static)
 app.get("/", function (req, res) {
   res.render("index", { title: "Home" })
 })
+app.use(async (req, res, next) => {
+  next({ status: 404, message: `Sorry, this page was snapped by Thanos` })
+})
+
+/* ***********************
+ * Express Error Handler
+ *Place after all other middleware
+ *************************/
+
+ app.use(async (err, req, res, next) => {
+  let nav = await utilities.getNav()
+   console.error(`Error at: ${req.url}: ${err.message}`)
+   res.render("errors/error", {
+     title: err.status || "Server Error",
+     message: err.message,
+     nav,
+   })
+ })
 
 /* ***********************
  * Local Server Information
