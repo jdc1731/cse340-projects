@@ -3,6 +3,8 @@
  * application. It is used to control the project.
  *******************************************/
 
+const baseController = require("./controllers/baseController")
+
 const utilities = require('./utilities');
 /* ***********************
  * Require Statements
@@ -27,9 +29,8 @@ app.set("layout", "layouts/layout") // not at views root
  *************************/
 app.use(static)
 //Index Route
-app.get("/", function (req, res) {
-  res.render("index", { title: "Home" })
-})
+app.get("/", baseController.buildHome) 
+
 app.use(async (req, res, next) => {
   next({ status: 404, message: `Sorry, this page was snapped by Thanos` })
 })
