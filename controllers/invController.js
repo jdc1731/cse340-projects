@@ -12,11 +12,52 @@ invCont.buildByClassificationId = async function (req, res, next) {
   const grid = await utilities.buildClassificationGrid(data)
   let nav = await utilities.getNav()
   const className = data[0].classification_name
-  res.render("./inventory/classification", {
+  res.render("inventory/classification", {
     title: className + " vehicles",
     nav,
     grid,
   })
+}
+
+/* ***************************
+ *  Build inventory detail view
+ * ************************** */
+
+invCont.buildByInvId = async function (req, res, next) {
+    console.log('buildByInvId hit with', { invId: req.params.invId });
+  try {
+    const invId = Number.parseInt(req.params.invId, 10)
+
+    //Validate the id 
+    if (!Number.isInteger(invId)) {
+      const err = new Error("Invalid vehicle id.")
+      err.status = 400 
+      return next(err) 
+    }
+
+    // Ask the MODEL for this one vehicle
+    const vehicle = await invModel.getVehicleById(invId)
+
+    
+    if (!vehicle) {
+      const err = new Error("Vehicle not found.")
+      err.status = 404 
+      return next(err)
+    }
+
+    //  Build pieces the view needs
+    const nav = await utilities.getNav() 
+    // buildVehicleDetail = UTILITY 
+    const detail = await utilities.buildVehicleDetail(vehicle)
+
+    // Title shown in <title> and <h1>: "YEAR MAKE MODEL"
+    const title = `${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`
+
+    // Render the VIEW 
+    return res.render("inventory/detail", { title, nav, detail })
+  } catch (e) {
+    return next(e)
+  }
 }
 
 module.exports = invCont

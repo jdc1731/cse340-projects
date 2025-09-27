@@ -62,6 +62,53 @@ Util.buildClassificationGrid = async function (data = []) {
  **************************************** */
 Util.handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next)
 
+/* **************************************
+ * Build the vehicle detail HTML (single item)
+ * - Uses FULL image (inv_image)
+ * - Formats price as USD and miles with commas
+ * ************************************ */
+Util.buildVehicleDetail = async function (vehicle) {
+  if (!vehicle) {
+    return '<p class="notice">Sorry, that vehicle could not be found.</p>';
+  }
+
+  const usd   = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' })
+                  .format(vehicle.inv_price);
+  const miles = new Intl.NumberFormat('en-US').format(vehicle.inv_miles);
+
+  return `
+    <article class="vehicle-detail">
+      <figure class="vehicle-media">
+        <img
+          src="${vehicle.inv_image}"
+          alt="Photo of ${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}"
+          loading="eager"
+        />
+        <figcaption>${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}</figcaption>
+      </figure>
+
+      <section class="vehicle-info" aria-label="Vehicle information">
+        <h2 class="vehicle-title">${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}</h2>
+        <p class="vehicle-price"><strong>${usd}</strong></p>
+
+        <dl class="vehicle-specs">
+          <div><dt>Make</dt><dd>${vehicle.inv_make}</dd></div>
+          <div><dt>Model</dt><dd>${vehicle.inv_model}</dd></div>
+          <div><dt>Year</dt><dd>${vehicle.inv_year}</dd></div>
+          <div><dt>Mileage</dt><dd>${miles} miles</dd></div>
+          <div><dt>Color</dt><dd>${vehicle.inv_color}</dd></div>
+        </dl>
+
+        <div class="vehicle-description">
+          <h3>Description</h3>
+          <p>${vehicle.inv_description}</p>
+        </div>
+      </section>
+    </article>
+  `;
+};
+
+
 module.exports = Util;
 
 
