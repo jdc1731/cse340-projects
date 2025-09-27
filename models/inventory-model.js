@@ -12,19 +12,22 @@ async function getClassifications(){
  *  Get all inventory items and classification_name by classification_id
  * ************************** */
 async function getInventoryByClassificationId(classification_id) {
-  try {
-    const data = await pool.query(
-      `SELECT * FROM public.inventory AS i 
-      JOIN public.classification AS c 
-      ON i.classification_id = c.classification_id 
-      WHERE i.classification_id = $1`,
-      [classification_id]
-    )
-    return data.rows
-  } catch (error) {
-    console.error("getclassificationsbyid error " + error)
-  }
+  const sql = `
+    SELECT DISTINCT ON (i.inv_id)
+      i.inv_id, i.inv_make, i.inv_model, i.inv_year, i.inv_price,
+      i.inv_miles, i.inv_color, i.inv_description,
+      i.inv_image, i.inv_thumbnail,
+      c.classification_name
+    FROM public.inventory AS i
+    JOIN public.classification AS c
+      ON i.classification_id = c.classification_id
+    WHERE i.classification_id = $1
+    ORDER BY i.inv_id
+  `;
+  const { rows } = await pool.query(sql, [classification_id]);
+  return rows;
 }
+
 
 /* ***************************
  *  Get one vehicle by inv_id (single row or null)
