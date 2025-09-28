@@ -30,8 +30,8 @@ async function getInventoryByClassificationId(classification_id) {
 
 
 /* ***************************
- *  Get one vehicle by inv_id (single row or null)
- *  (Model = DB access function)
+ *  Get one vehicle by inv_id 
+
  * ************************** */
 async function getVehicleById(inv_id) {
   const sql = `
