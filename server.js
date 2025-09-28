@@ -6,6 +6,9 @@
 const baseController = require("./controllers/baseController")
 
 const utilities = require('./utilities');
+
+const path = require("path")
+
 /* ***********************
  * Require Statements
  *************************/
@@ -33,6 +36,10 @@ app.use(static)
 app.get("/", utilities.handleErrors(baseController.buildHome)) 
 // Inventory routes
 app.use("/inv", inventoryRoute)
+
+app.get("/favicon.ico", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "images", "site", "favicon-32x32.png"))
+})
 
 app.use(async (req, res, next) => {
   next({ status: 404, message: `Sorry, this page was snapped by Thanos` })
