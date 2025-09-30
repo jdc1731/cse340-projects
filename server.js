@@ -21,6 +21,9 @@ const inventoryRoute = require("./routes/inventoryRoute")
 const session = require("express-session")
 const pool = require("./database/")
 
+const accountRoute = require("./routes/accountRoute");
+
+
 // ***********************
 // Middleware
 // *************************/
@@ -65,6 +68,7 @@ app.get("/favicon.ico", (req, res) => {
 app.use(async (req, res, next) => {
   next({ status: 404, message: `Sorry, this page was snapped by Thanos` })
 })
+app.use("/account", accountRoute);
 
 /* ***********************
  * Express Error Handler
