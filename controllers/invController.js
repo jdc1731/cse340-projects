@@ -8,7 +8,7 @@ const invCont = {}
  * ************************** */
 invCont.buildByClassificationId = async function (req, res, next) {
   const classification_id = req.params.classificationId
-    const data = await invModel.getInventoryByClassificationId(classification_id)
+  const data = await invModel.getInventoryByClassificationId(classification_id)
 
   const grid = await utilities.buildClassificationGrid(data)
   let nav = await utilities.getNav()
@@ -50,7 +50,7 @@ invCont.buildByInvId = async function (req, res, next) {
 
     //  Build pieces the view needs
     const nav = await utilities.getNav() 
-    // buildVehicleDetail = UTILITY 
+    // buildVehicleDetail  
     const detail = await utilities.buildVehicleDetail(vehicle)
 
     // Title shown in <title> and <h1>: "YEAR MAKE MODEL"

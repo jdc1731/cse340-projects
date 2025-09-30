@@ -18,7 +18,29 @@ const env = require("dotenv").config()
 const app = express()
 const static = require("./routes/static")
 const inventoryRoute = require("./routes/inventoryRoute")
+const session = require("express-session")
+const pool = require("./database/")
 
+// ***********************
+// Middleware
+// *************************/
+app.use(session({
+  store: new (require('connect-pg-simple')(session))({
+    createTableIfMissing: true,
+    pool,
+  }),
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  name: 'sessionId',
+}))
+
+// Express Message Middleware
+app.use(require('connect-flash')())
+app.use((req, res, next) => {
+  res.locals.messages = require('express-messages')(req, res)
+  next()
+})
 
 /* ***********************
  * View Engine and Templates
@@ -26,7 +48,6 @@ const inventoryRoute = require("./routes/inventoryRoute")
 app.set("view engine", "ejs")
 app.use(expressLayouts)
 app.set("layout", "layouts/layout") // not at views root
-
 
 /* ***********************
  * Routes
