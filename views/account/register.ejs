@@ -1,0 +1,69 @@
+<h1><%= title %></h1>
+
+<% if (typeof messages === "function") { %>
+<div class="flash"><%- messages() %></div>
+<% } %>
+
+<form
+  action="/account/register"
+  method="post"
+  class="auth-form"
+>
+  <div class="form-row">
+    <label for="account_firstname">First name</label>
+    <input
+      id="account_firstname"
+      name="account_firstname"
+      type="text"
+      autocomplete="given-name"
+      required
+      value="<%= typeof account_firstname !== 'undefined' ? account_firstname : '' %>"
+    />
+  </div>
+
+  <div class="form-row">
+    <label for="account_lastname">Last name</label>
+    <input
+      id="account_lastname"
+      name="account_lastname"
+      type="text"
+      autocomplete="family-name"
+      required
+      value="<%= typeof account_lastname !== 'undefined' ? account_lastname : '' %>"
+    />
+  </div>
+
+  <div class="form-row">
+    <label for="account_email">Email</label>
+    <input
+      id="account_email"
+      name="account_email"
+      type="email"
+      autocomplete="email"
+      required
+      value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
+    />
+  </div>
+
+  <div class="form-row">
+    <label for="account_password">Password</label>
+    <small id="pw-help" class="help">
+      Password must be at least <strong>12 characters</strong> and include
+      <strong>1 capital letter</strong>, <strong>1 number</strong>, and
+      <strong>1 special character</strong>.
+    </small>
+    <input
+      type="password"
+      name="account_password"
+      id="accountPassword"
+      required
+      pattern="^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\s).{12,}$"
+    />
+  </div>
+
+  <button type="submit" class="btn-primary">Register</button>
+</form>
+
+<p class="auth-alt">
+  Already have an account? <a href="/account/login">Log in</a>.
+</p>

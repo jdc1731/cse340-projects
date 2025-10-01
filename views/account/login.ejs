@@ -1,0 +1,27 @@
+<h1><%= title %></h1>
+
+<!-- Flash messages  -->
+<% if (typeof messages === "function") { %>
+  <div class="flash"><%- messages() %></div>
+<% } %>
+
+<div class="auth-card">
+  <form method="post" action="/account/login" novalidate class="auth-form">
+    <div class="form-row">
+      <label for="account_email">Email</label>
+      <input id="account_email" name="account_email" type="email" autocomplete="username" />
+    </div>
+
+    <div class="form-row">
+      <label for="account_password">Password</label>
+      <input id="account_password" name="account_password" type="password" autocomplete="current-password" />
+    </div>
+
+    <button type="submit" class="btn-primary">Log In</button>
+  </form>
+
+  <p class="auth-alt">
+    Don't have an account?
+    <a href="/account/register">Register here</a>.
+  </p>
+</div>

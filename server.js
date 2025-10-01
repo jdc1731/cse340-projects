@@ -23,6 +23,8 @@ const pool = require("./database/")
 
 const accountRoute = require("./routes/accountRoute");
 
+const bodyParser = require("body-parser")
+
 
 // ***********************
 // Middleware
@@ -37,6 +39,10 @@ app.use(session({
   saveUninitialized: true,
   name: 'sessionId',
 }))
+
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
 
 // Express Message Middleware
 app.use(require('connect-flash')())
@@ -60,6 +66,7 @@ app.use(static)
 app.get("/", utilities.handleErrors(baseController.buildHome)) 
 // Inventory routes
 app.use("/inv", inventoryRoute)
+app.use("/account", accountRoute);
 
 app.get("/favicon.ico", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "images", "site", "favicon-32x32.png"))
@@ -68,7 +75,6 @@ app.get("/favicon.ico", (req, res) => {
 app.use(async (req, res, next) => {
   next({ status: 404, message: `Sorry, this page was snapped by Thanos` })
 })
-app.use("/account", accountRoute);
 
 /* ***********************
  * Express Error Handler

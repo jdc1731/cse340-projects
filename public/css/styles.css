@@ -481,6 +481,63 @@ img {
   border-radius: 8px;
 }
 
+/* login form */
+.auth-card {
+  max-width: 28rem;
+  margin: 1rem auto;
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.auth-form .form-row {
+  display: grid;
+  gap: .35rem;
+  margin-bottom: .85rem;
+}
+
+.auth-form label {
+  font-weight: 600;
+  font-size: .95rem;
+}
+
+.auth-form input {
+  padding: .6rem .7rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+.btn-primary {
+  display: inline-block;
+  padding: .6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid #2563eb;
+  background: #2563eb;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-primary:hover { filter: brightness(1.05); }
+
+.flash { margin: .5rem 0 1rem; }
+.auth-alt { margin-top: 1rem; }
+
+/* Auth view links */
+.auth-alt a {
+  color: #2563eb;             
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 2px;
+}
+
+.auth-alt a:hover,
+.auth-alt a:focus {
+  text-decoration-thickness: 3px; 
+  outline: none;
+}
+
+
 @media screen and (min-width: 700px) {
   body {
   background: url("../images/site/checkerboard.jpg");
