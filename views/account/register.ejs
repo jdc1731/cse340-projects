@@ -67,3 +67,11 @@
 <p class="auth-alt">
   Already have an account? <a href="/account/login">Log in</a>.
 </p>
+
+<% if (errors) { %>
+  <ul class="notice">
+ <% errors.array().forEach(error => { %>
+   <li><%= error.msg %></li>
+<%  }) %>
+ </ul>
+<% } %>

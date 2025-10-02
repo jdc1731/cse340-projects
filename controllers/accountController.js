@@ -45,10 +45,6 @@ async function buildLogin(req, res) {
     res.render("account/login", { title: "Login", nav });
 }
   
-async function buildRegister(req, res) {
-    const nav = await utilities.getNav();  
-    res.render("account/register", { title: "Register", nav, errors: null });
-}
 
 /* ****************************************
 *  Deliver registration view
@@ -58,7 +54,7 @@ async function buildRegister(req, res, next) {
     res.render("account/register", {
       title: "Registration",
         nav,
-        errors: null
+        errors: null,
     })
   }
 
