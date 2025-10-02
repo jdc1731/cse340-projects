@@ -2,19 +2,40 @@
 
 <!-- Flash messages  -->
 <% if (typeof messages === "function") { %>
-  <div class="flash"><%- messages() %></div>
+<div class="flash"><%- messages() %></div>
+<% } %> <% if (typeof errors !== "undefined" && errors.length) { %>
+<div class="form-errors">
+  <ul>
+    <% errors.forEach(e => { %>
+    <li><%= e.msg %></li>
+    <% }) %>
+  </ul>
+</div>
 <% } %>
 
 <div class="auth-card">
-  <form method="post" action="/account/login" novalidate class="auth-form">
+  <form id="loginForm" action="/account/login" method="post" class="auth-form">
     <div class="form-row">
-      <label for="account_email">Email</label>
-      <input id="account_email" name="account_email" type="email" autocomplete="username" />
+      <label for="login_email">Email</label>
+      <input
+        id="login_email"
+        name="account_email"
+        type="email"
+        autocomplete="email"
+        required
+        value="<%= locals.account_email %>"
+      />
     </div>
 
     <div class="form-row">
-      <label for="account_password">Password</label>
-      <input id="account_password" name="account_password" type="password" autocomplete="current-password" />
+      + <label for="login_password">Password</label>
+      <input
+        id="login_password"
+        name="account_password"
+        type="password"
+        autocomplete="current-password"
+        required
+      />
     </div>
 
     <button type="submit" class="btn-primary">Log In</button>

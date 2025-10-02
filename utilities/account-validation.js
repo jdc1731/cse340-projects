@@ -1,11 +1,12 @@
 const utilities = require(".");
 const { body, validationResult } = require('express-validator');
+const accountModel = require("../models/account-model");
 const validate = {};
 
 /*  **********************************
   *  Registration Data Validation Rules
   * ********************************* */
-  validate.registationRules = () => {
+  validate.registrationRules = () => {
     return [
       // firstname is required and must be string
       body("account_firstname")
@@ -43,9 +44,47 @@ const validate = {};
           minNumbers: 1,
           minSymbols: 1,
         })
-        .withMessage("Password does not meet requirements."),
+            .withMessage("Password does not meet requirements."),
+      
+      // valid email is required and cannot already exist in the database
+        body("account_email")
+            .isEmail().withMessage("A valid email is required.")
+            .normalizeEmail() // refer to validator.js docs
+            .custom(async (account_email) => {
+                const emailExists = await accountModel.checkExistingEmail(account_email)
+                if (emailExists){
+                    throw new Error("Email exists. Please log in or use different email")
+                }
+                return true
+            }),
     ]
 }
+    
+    // --- Login validation rules ---
+validate.loginRules = () => [
+  body("account_email")
+    .trim()
+    .isEmail().withMessage("Please enter a valid email address.")
+    .normalizeEmail(),
+  body("account_password")
+    .trim()
+    .notEmpty().withMessage("Password is required."),
+    ]
+
+    // --- Handle login validation errors ---
+validate.checkLoginData = async (req, res, next) => {
+  const result = validationResult(req)
+  if (result.isEmpty()) return next()
+
+  const nav = await utilities.getNav()
+  return res.status(400).render("account/login", {
+    title: "Login",
+    nav,
+    errors: result.array(),            // array of {msg, param,...}
+    account_email: req.body.account_email, // sticky email
+  })
+}
+
   
 /* ******************************
  * Check data and return errors or continue to registration
