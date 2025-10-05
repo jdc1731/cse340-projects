@@ -70,4 +70,19 @@ invCont.triggerServerError = async function (req, res, next) {
   throw err; 
 };
 
+// Build management view
+invCont.buildManagement = async function (req, res, next) {
+    const nav = await utilities.getNav();  
+    res.render("inventory/management", { title: "Inventory Management", nav });
+}
+  
+invCont.buildAddClassification = async function (req, res, next) {
+    const nav = await utilities.getNav();  
+  res.render("inventory/add-classification", {
+    title: "Add Classification", nav,
+    errors: null,
+    classification_name: ""
+     });
+}
+
 module.exports = invCont

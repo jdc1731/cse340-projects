@@ -1,0 +1,11 @@
+<h1><%= title %></h1>
+
+<% /* Flash messages (success/failure) */ %>
+<% if (typeof messages === "function") { %>
+  <div class="flash"><%- messages() %></div>
+<% } %>
+
+<ul class="mgmt-links">
+  <li><a href="/inv/add-classification">Add New Classification</a></li>
+  <li><a href="/inv/add-inventory">Add New Inventory</a></li>
+</ul>
