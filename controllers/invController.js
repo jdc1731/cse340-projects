@@ -22,6 +22,42 @@ invCont.buildByClassificationId = async function (req, res, next) {
   })
 }
 
+//  Add Classification form submission (POST)
+invCont.addClassification = async function (req, res, next) {
+  const { classification_name } = req.body
+  const nav = await utilities.getNav()
+
+  if (!classification_name || !classification_name.trim()) {
+    return res.status(400).render("inventory/add-classification", {
+      title: "Add Classification",
+      nav,
+      errors: [{ msg: "Please provide a classification name." }],
+      classification_name
+    })
+  }
+
+  // Ask the MODEL to insert 
+  const result = await invModel.addClassification(classification_name.trim())
+
+  if (result && result.rowCount === 1) {
+    req.flash("notice", `Added classification: ${classification_name.trim()}`)
+    const freshNav = await utilities.getNav() 
+    return res.status(201).render("inventory/management", {
+      title: "Inventory Management",
+      nav: freshNav
+    })
+  }
+
+  // Insert failed, re-render form with error and sticky value
+  return res.status(400).render("inventory/add-classification", {
+    title: "Add Classification",
+    nav,
+    errors: [{ msg: "Insert failed. Please try again." }],
+    classification_name
+  })
+}
+
+
 /* ***************************
  *  Build inventory detail view
  * ************************** */
