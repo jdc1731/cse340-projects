@@ -1,37 +1,23 @@
+// database/index.js
 const { Pool } = require("pg")
 require("dotenv").config()
-/* ***************
- * Connection Pool
- * SSL Object needed for local testing of app
- * But will cause problems in production environment
- * If else will make determination which to use
- *****************/
-let pool
-if (process.env.NODE_ENV == "development") {
-  pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-      rejectUnauthorized: false,
-    },
+
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  // Hosted Postgres usually requires SSL. Disable only if you know you're local.
+  ssl: process.env.PGSSL === "disable" ? false : { rejectUnauthorized: false },
+  keepAlive: true,
+  idleTimeoutMillis: 30000,
+  connectionTimeoutMillis: 10000,
 })
 
-// Added for troubleshooting queries
-// during development
-module.exports = {
-  async query(text, params) {
-    try {
-      const res = await pool.query(text, params)
-      console.log("executed query", { text })
-      return res
-    } catch (error) {
-      console.error("error in query", { text })
-      throw error
-    }
-  },
-}
-} else {
-  pool = new Pool({
-    connectionString: process.env.DATABASE_URL,
-  })
-  module.exports = pool
-}
+// OPTIONAL: uncomment to log queries during dev
+// const origQuery = pool.query.bind(pool)
+// pool.query = async (...args) => {
+//   const text = typeof args[0] === "string" ? args[0] : args[0]?.text
+//   console.log("executed query", { text })
+//   try { return await origQuery(...args) }
+//   catch (err) { console.error("error in query", { text, err: err.message }); throw err }
+// }
+
+module.exports = pool

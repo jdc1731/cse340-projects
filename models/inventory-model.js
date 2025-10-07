@@ -53,7 +53,7 @@ async function addClassification(classification_name) {
     RETURNING classification_id
   `
   // returns a query result with rowCount, rows[0].classification_id, etc.
-  return await pool.query(sql, [classification_name])
+  return pool.query(sql, [classification_name])
 }
 
 

@@ -25,7 +25,6 @@ const accountRoute = require("./routes/accountRoute");
 
 const bodyParser = require("body-parser")
 
-
 // ***********************
 // Middleware
 // *************************/
