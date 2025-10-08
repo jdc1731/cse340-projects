@@ -24,5 +24,13 @@ router.get(
   utilities.handleErrors(invController.triggerServerError)
 );
 
+router.get("/add-inventory", utilities.handleErrors(invController.buildAddInventory));
+
+router.post(
+  "/add-inventory",
+  invValidate.inventoryRules(),
+  invValidate.checkInventoryData,
+  utilities.handleErrors(invController.addInventory)
+)
 
 module.exports = router;
