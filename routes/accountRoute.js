@@ -1,16 +1,20 @@
-const regValidate = require('../utilities/account-validation')
 const express = require("express")
 const router = new express.Router()
 
-const utilities = require('../utilities'); 
+const utilities = require("../utilities")
+const accountController = require("../controllers/accountController")
+const regValidate = require("../utilities/account-validation") // use one name
 
-const accountController = require("../controllers/accountController");
-const validate = require('../utilities/account-validation');
+// GET /account/  -> Account Management
+router.get("/", utilities.handleErrors(accountController.buildAccountManagement))
 
-router.get("/", utilities.handleErrors(accountController.buildLogin));
-router.get("/login", utilities.handleErrors(accountController.buildLogin));
-router.get("/register", utilities.handleErrors(accountController.buildRegister));
-// Process the registration data
+// GET /account/login  -> Login view
+router.get("/login", utilities.handleErrors(accountController.buildLogin))
+
+// GET /account/register 
+router.get("/register", utilities.handleErrors(accountController.buildRegister))
+
+// POST /account/register 
 router.post(
   "/register",
   regValidate.registrationRules(),
@@ -18,14 +22,12 @@ router.post(
   utilities.handleErrors(accountController.registerAccount)
 )
 
-// Process the login attempt
+// POST /account/login 
 router.post(
-    "/login",
-    validate.loginRules(),
-    validate.checkLoginData,
-  (req, res) => {
-    res.status(200).send('login process')
-  }
+  "/login",
+  regValidate.loginRules(),
+  regValidate.checkLoginData,
+  utilities.handleErrors(accountController.accountLogin) 
 )
 
-module.exports = router;
+module.exports = router

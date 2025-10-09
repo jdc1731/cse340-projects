@@ -1,2 +1,18 @@
 <h1><%= title %></h1>
-<p>Welcome to your account dashboard.</p>
+
+<%  %>
+<% if (typeof messages === "function") { %>
+  <div class="flash"><%- messages() %></div>
+<% } %>
+
+<%  %>
+<% if (typeof errors !== "undefined" && errors && errors.length) { %>
+  <ul class="errors">
+    <% errors.forEach(err => { %>
+      <li><%= err.msg %></li>
+    <% }) %>
+  </ul>
+<% } %>
+
+<p>You’re logged in.</p>
+

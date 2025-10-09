@@ -9,6 +9,8 @@ const utilities = require('./utilities');
 
 const path = require("path")
 
+const cookieParser = require("cookie-parser")
+
 /* ***********************
  * Require Statements
  *************************/
@@ -49,6 +51,8 @@ app.use((req, res, next) => {
   res.locals.messages = require('express-messages')(req, res)
   next()
 })
+
+app.use(cookieParser())
 
 /* ***********************
  * View Engine and Templates
