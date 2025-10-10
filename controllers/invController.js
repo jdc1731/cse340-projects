@@ -108,9 +108,19 @@ invCont.triggerServerError = async function (req, res, next) {
 
 // Build management view
 invCont.buildManagement = async function (req, res, next) {
-    const nav = await utilities.getNav();  
-    res.render("inventory/management", { title: "Inventory Management", nav });
-}
+  try {
+    const nav = await utilities.getNav();
+    const classificationSelect = await utilities.buildClassificationList(); 
+    res.render("inventory/management", {
+      title: "Inventory Management",
+      nav,
+      classificationSelect, 
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
   
 invCont.buildAddClassification = async function (req, res, next) {
     const nav = await utilities.getNav();  
@@ -211,5 +221,66 @@ invCont.addInventory = async function (req, res, next) {
     return next(err)
   }
 }
+
+/* ***************************
+ *  Return Inventory by Classification As JSON
+ * ************************** */
+invCont.getInventoryJSON = async (req, res, next) => {
+  const classification_id = parseInt(req.params.classification_id)
+  const invData = await invModel.getInventoryByClassificationId(classification_id)
+  if (invData[0].inv_id) {
+    return res.json(invData)
+  } else {
+    next(new Error("No data returned"))
+  }
+}
+
+// **************************************
+// Build Edit Inventory view
+// controllers/invController.js
+
+invCont.buildEditInventory = async function (req, res, next) {
+  try {
+    const inv_id = parseInt(req.params.inv_id, 10)
+    if (!Number.isInteger(inv_id)) {
+      const err = new Error("Invalid vehicle id")
+      err.status = 400
+      return next(err)
+    }
+
+    const vehicle = await invModel.getVehicleById(inv_id)
+    if (!vehicle) {
+      const err = new Error("Vehicle not found")
+      err.status = 404
+      return next(err)
+    }
+
+    const nav = await utilities.getNav()
+    const classificationList = await utilities.buildClassificationList(vehicle.classification_id)
+
+    return res.render("inventory/edit-inventory", {
+      title: `Edit ${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`,
+      nav,
+      classificationList,
+      errors: null,
+
+      // sticky values pre-filled from DB
+      inv_id: vehicle.inv_id,
+      inv_make: vehicle.inv_make,
+      inv_model: vehicle.inv_model,
+      inv_year: vehicle.inv_year,
+      inv_description: vehicle.inv_description,
+      inv_image: vehicle.inv_image,
+      inv_thumbnail: vehicle.inv_thumbnail,
+      inv_price: vehicle.inv_price,
+      inv_miles: vehicle.inv_miles,
+      inv_color: vehicle.inv_color,
+      classification_id: vehicle.classification_id,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
 
 module.exports = invCont

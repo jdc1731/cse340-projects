@@ -42,7 +42,10 @@ app.use(session({
 }))
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true })) 
+
+app.use(cookieParser())
+app.use(utilities.checkJWTToken)
 
 
 // Express Message Middleware
@@ -51,8 +54,6 @@ app.use((req, res, next) => {
   res.locals.messages = require('express-messages')(req, res)
   next()
 })
-
-app.use(cookieParser())
 
 /* ***********************
  * View Engine and Templates
