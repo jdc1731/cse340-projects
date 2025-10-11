@@ -1,4 +1,4 @@
-<!-- views/inventory/add-inventory.ejs -->
+<!-- views/inventory/edit-inventory.ejs -->
 <h1><%= title %></h1>
 
 <% if (typeof messages === "function") { %>
@@ -13,7 +13,18 @@
 </div>
 <% } %>
 
-<form action="/inv/edit-inventory" method="post" class="inv-form">
+<form
+  id="updateForm"
+  action="/inv/edit-inventory"
+  method="post"
+  class="inv-form"
+>
+  <input
+    type="hidden"
+    name="inv_id"
+    value="<%= typeof inv_id !== 'undefined' ? inv_id : '' %>"
+  />
+
   <div class="form-row">
     <label for="classificationList">Classification</label>
     <%- classificationList %>
@@ -124,5 +135,7 @@
     >
   </div>
 
-  <button type="submit" class="btn-primary">Update Vehicle</button>
+  <button type="submit" disabled class="btn-primary">Update Vehicle</button>
 </form>
+
+<script src="/js/inv-update.js" defer></script>

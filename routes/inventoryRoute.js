@@ -37,4 +37,7 @@ router.post(
 
 router.get("/edit/:inv_id", utilities.handleErrors(invController.buildEditInventory));
 
+router.post("/edit-inventory",
+  invValidate.inventoryRules(), invValidate.checkUpdateData, utilities.handleErrors(invController.updateInventory))
+
 module.exports = router;

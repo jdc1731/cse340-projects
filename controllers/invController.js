@@ -238,49 +238,93 @@ invCont.getInventoryJSON = async (req, res, next) => {
 // **************************************
 // Build Edit Inventory view
 // controllers/invController.js
-
+// **************************************
 invCont.buildEditInventory = async function (req, res, next) {
+  const inv_id = parseInt(req.params.inv_id, 10)
+  const vehicle = await invModel.getVehicleById(inv_id)
+  const nav = await utilities.getNav()
+  const classificationList = await utilities.buildClassificationList(vehicle.classification_id)
+
+  return res.render("inventory/edit-inventory", {
+    title: `Edit ${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`,
+    nav,
+    classificationList,         
+    errors: null,
+    inv_id: vehicle.inv_id,
+    inv_make: vehicle.inv_make,
+    inv_model: vehicle.inv_model,
+    inv_year: vehicle.inv_year,
+    inv_description: vehicle.inv_description,
+    inv_image: vehicle.inv_image,
+    inv_thumbnail: vehicle.inv_thumbnail,
+    inv_price: vehicle.inv_price,
+    inv_miles: vehicle.inv_miles,
+    inv_color: vehicle.inv_color,
+    classification_id: vehicle.classification_id,
+  })
+}
+
+
+invCont.updateInventory = async function (req, res, next) {
   try {
-    const inv_id = parseInt(req.params.inv_id, 10)
-    if (!Number.isInteger(inv_id)) {
-      const err = new Error("Invalid vehicle id")
-      err.status = 400
-      return next(err)
-    }
-
-    const vehicle = await invModel.getVehicleById(inv_id)
-    if (!vehicle) {
-      const err = new Error("Vehicle not found")
-      err.status = 404
-      return next(err)
-    }
-
     const nav = await utilities.getNav()
-    const classificationList = await utilities.buildClassificationList(vehicle.classification_id)
+    const {
+      classification_id,
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color,
+    } = req.body
 
-    return res.render("inventory/edit-inventory", {
-      title: `Edit ${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`,
+    const result = await invModel.updateInventory({
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color,
+      classification_id,
+    })
+
+    if (result && result.inv_id) {
+      req.flash("notice", `The ${inv_year} ${inv_make} ${inv_model} was successfully updated.`)
+      return req.session.save(() => res.redirect("/inv/"))
+
+    }
+
+    const classificationList = await utilities.buildClassificationList(classification_id)
+    return res.status(400).render("inventory/edit-inventory", {
+      title: `Edit ${inv_year} ${inv_make} ${inv_model}`,
       nav,
-      classificationList,
-      errors: null,
-
-      // sticky values pre-filled from DB
-      inv_id: vehicle.inv_id,
-      inv_make: vehicle.inv_make,
-      inv_model: vehicle.inv_model,
-      inv_year: vehicle.inv_year,
-      inv_description: vehicle.inv_description,
-      inv_image: vehicle.inv_image,
-      inv_thumbnail: vehicle.inv_thumbnail,
-      inv_price: vehicle.inv_price,
-      inv_miles: vehicle.inv_miles,
-      inv_color: vehicle.inv_color,
-      classification_id: vehicle.classification_id,
+      classificationList,             
+      errors: [{ msg: "Update failed. Please try again." }],
+      inv_id,
+      inv_make,
+      inv_model,
+      inv_year,
+      inv_description,
+      inv_image,
+      inv_thumbnail,
+      inv_price,
+      inv_miles,
+      inv_color,
+      classification_id,
     })
   } catch (err) {
     return next(err)
   }
 }
+
 
 
 module.exports = invCont
