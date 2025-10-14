@@ -124,5 +124,16 @@ async function accountLogin(req, res) {
   }
 }
 
+// controllers/accountController.js (inside exports.login)
+// req.session.loggedin = true;
+// req.session.accountData = {
+//   account_id: user.account_id,
+//   account_firstname: user.account_firstname,
+//   account_lastname: user.account_lastname,
+//   account_email: user.account_email,
+//   account_type: user.account_type 
+// };
+// req.session.save(() => res.redirect('/account')); 
+
 module.exports = { buildAccountManagement, buildLogin, buildRegister, registerAccount, accountLogin };
 

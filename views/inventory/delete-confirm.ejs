@@ -1,0 +1,51 @@
+<!-- views/inventory/delete-confirm.ejs -->
+<h1><%= title %></h1>
+
+<% if (typeof messages === "function") { %>
+  <div class="flash"><%- messages() %></div>
+<% } %>
+
+<% if (errors && errors.length) { %>
+  <div class="form-errors" role="alert" aria-live="polite">
+    <ul>
+      <% errors.forEach(e => { %><li><%= e.msg %></li><% }) %>
+    </ul>
+  </div>
+<% } %>
+
+<p class="warning">Confirm Deletion — The delete is permanent.</p>
+
+<form
+  id="deleteForm"
+  action="/inv/delete-inventory"
+  method="post"
+  class="inv-form"
+>
+  <input type="hidden" name="inv_id" value="<%= typeof inv_id !== 'undefined' ? inv_id : '' %>" />
+
+  <div class="form-row">
+    <label for="inv_make">Make</label>
+    <input id="inv_make" name="inv_make" type="text" readonly
+           value="<%= typeof inv_make !== 'undefined' ? inv_make : '' %>">
+  </div>
+
+  <div class="form-row">
+    <label for="inv_model">Model</label>
+    <input id="inv_model" name="inv_model" type="text" readonly
+           value="<%= typeof inv_model !== 'undefined' ? inv_model : '' %>">
+  </div>
+
+  <div class="form-row">
+    <label for="inv_year">Year</label>
+    <input id="inv_year" name="inv_year" type="text" readonly
+           value="<%= typeof inv_year !== 'undefined' ? inv_year : '' %>">
+  </div>
+
+  <div class="form-row">
+    <label for="inv_price">Price (USD)</label>
+    <input id="inv_price" name="inv_price" type="text" readonly
+           value="<%= typeof inv_price !== 'undefined' ? inv_price : '' %>">
+  </div>
+
+  <button type="submit" class="btn-primary">Delete Vehicle</button>
+</form>

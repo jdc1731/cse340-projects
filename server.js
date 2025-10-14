@@ -41,12 +41,17 @@ app.use(session({
   name: 'sessionId',
 }))
 
+app.use((req, res, next) => {
+  res.locals.loggedin = !!(req.session && req.session.loggedin);
+  res.locals.accountData = (req.session && req.session.accountData) || null;
+  next();
+});
+
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true })) 
 
 app.use(cookieParser())
-app.use(utilities.checkJWTToken)
-
 
 // Express Message Middleware
 app.use(require('connect-flash')())
@@ -54,6 +59,8 @@ app.use((req, res, next) => {
   res.locals.messages = require('express-messages')(req, res)
   next()
 })
+
+app.use(utilities.checkJWTToken)
 
 /* ***********************
  * View Engine and Templates

@@ -9,18 +9,25 @@ const invCont = {}
 invCont.buildByClassificationId = async function (req, res, next) {
   const classification_id = req.params.classificationId
   const data = await invModel.getInventoryByClassificationId(classification_id)
+  const nav = await utilities.getNav()
+
+  if (!Array.isArray(data) || data.length === 0) {
+    return res.render("inventory/classification", {
+      title: "No vehicles found",
+      nav,
+      grid: "<p>No vehicles in this classification.</p>",
+    })
+  }
 
   const grid = await utilities.buildClassificationGrid(data)
-  let nav = await utilities.getNav()
-    const className = data[0].classification_name
-    
-    
-  res.render("inventory/classification", {
+  const className = data[0].classification_name
+  return res.render("inventory/classification", {
     title: className + " vehicles",
     nav,
-      grid,
+    grid,
   })
 }
+
 
 //  Add Classification form submission (POST)
 invCont.addClassification = async function (req, res, next) {
@@ -40,13 +47,16 @@ invCont.addClassification = async function (req, res, next) {
   const result = await invModel.addClassification(classification_name.trim())
 
   if (result && result.rowCount === 1) {
-    req.flash("notice", `Added classification: ${classification_name.trim()}`)
-    const freshNav = await utilities.getNav() 
-    return res.status(201).render("inventory/management", {
-      title: "Inventory Management",
-      nav: freshNav
-    })
-  }
+  req.flash("notice", `Added classification: ${classification_name.trim()}`)
+  const freshNav = await utilities.getNav()
+  const classificationSelect = await utilities.buildClassificationList()
+  return res.status(201).render("inventory/management", {
+    title: "Inventory Management",
+    nav: freshNav,
+    classificationSelect,
+  })
+}
+
 
   // Insert failed, re-render form with error and sticky value
   return res.status(400).render("inventory/add-classification", {
@@ -188,14 +198,17 @@ invCont.addInventory = async function (req, res, next) {
       inv_color,
     })
 
-    if (result && result.rowCount === 1) {
-      req.flash("notice", `${inv_year} ${inv_make} ${inv_model} added.`)
-      const nav = await utilities.getNav()
-      return res.status(201).render("inventory/management", {
-        title: "Inventory Management",
-        nav,
-      })
-    }
+if (result && result.rowCount === 1) {
+  req.flash("notice", `${inv_year} ${inv_make} ${inv_model} added.`)
+  const nav = await utilities.getNav()
+  const classificationSelect = await utilities.buildClassificationList()
+  return res.status(201).render("inventory/management", {
+    title: "Inventory Management",
+    nav,
+    classificationSelect,
+  })
+}
+
 
 
     const nav = await utilities.getNav()
@@ -226,14 +239,13 @@ invCont.addInventory = async function (req, res, next) {
  *  Return Inventory by Classification As JSON
  * ************************** */
 invCont.getInventoryJSON = async (req, res, next) => {
-  const classification_id = parseInt(req.params.classification_id)
+  const classification_id = parseInt(req.params.classification_id, 10)
   const invData = await invModel.getInventoryByClassificationId(classification_id)
-  if (invData[0].inv_id) {
+    if (Array.isArray(invData) && invData.length > 0) {
     return res.json(invData)
-  } else {
+  }
     next(new Error("No data returned"))
   }
-}
 
 // **************************************
 // Build Edit Inventory view
@@ -326,5 +338,71 @@ invCont.updateInventory = async function (req, res, next) {
 }
 
 
+// **************************************
+// Build Delete Confirmation view
+// **************************************
+invCont.buildDeleteInventory = async function (req, res, next) {
+  try {
+    const inv_id = Number.parseInt(req.params.inv_id, 10)
+    if (!Number.isInteger(inv_id)) {
+      const err = new Error("Invalid vehicle id")
+      err.status = 400
+      return next(err)
+    }
+
+    const vehicle = await invModel.getVehicleById(inv_id)
+    if (!vehicle) {
+      const err = new Error("Vehicle not found")
+      err.status = 404
+      return next(err)
+    }
+
+    const nav = await utilities.getNav()
+
+    return res.render("inventory/delete-confirm", {
+      title: `Delete ${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`,
+      nav,
+      errors: null,
+
+      inv_id: vehicle.inv_id,
+      inv_make: vehicle.inv_make,
+      inv_model: vehicle.inv_model,
+      inv_year: vehicle.inv_year,
+      inv_price: vehicle.inv_price,
+    })
+  } catch (err) {
+    return next(err)
+  }
+}
+
+// **************************************
+// Delete Inventory item
+// **************************************
+
+invCont.deleteInventory = async function (req, res, next) {
+  try {
+    const inv_id = parseInt(req.body.inv_id, 10)
+
+    if (!Number.isInteger(inv_id)) {
+      const err = new Error("Invalid vehicle id")
+      err.status = 400
+      return next(err)
+    }
+
+    const result = await invModel.deleteInventory(inv_id)
+
+    if (result && result.rowCount === 1) {
+      req.flash("notice", `The vehicle was successfully deleted.`)
+      return req.session.save(() => res.redirect("/inv/"))
+    } else {
+
+      req.flash("notice", "Delete failed. Please try again.")
+
+      return req.session.save(() => res.redirect(`/inv/delete/${inv_id}`))
+    }
+  } catch (err) {
+    return next(err)
+  }
+}
 
 module.exports = invCont
