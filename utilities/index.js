@@ -136,54 +136,68 @@ Util.buildClassificationList = async function (classification_id = null) {
 }
 
 /* ****************************************
-* Middleware to check token validity
+* Middleware to check token validity 
 **************************************** */
 Util.checkJWTToken = (req, res, next) => {
- if (req.cookies.jwt) {
-  jwt.verify(
-   req.cookies.jwt,
-   process.env.ACCESS_TOKEN_SECRET,
-   function (err, accountData) {
-    if (err) {
-     req.flash("notice", "Please log in")
-     res.clearCookie("jwt")
-     return res.redirect("/account/login")
-    }
-    res.locals.accountData = accountData
-    res.locals.loggedin = 1
-    next()
-   })
- } else {
-  next()
- }
-}
+  const token = req.cookies?.jwt;
+  if (!token) return next();
 
-// ***************************************
-// Authorization Middleware
-// ***************************************
-// utilities/index.js
-Util.checkAccountType = (req, res, next) => {
-  const data = res.locals.accountData 
-  if (data && (data.account_type === "Employee" || data.account_type === "Admin")) {
-    return next()
-  }
-  req.flash("notice", "You do not have permission to access that page.")
-  return res.redirect("/account/login")
-}
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, accountData) => {
+    if (err) {
+      res.clearCookie("jwt");
+      return next();
+    }
+    req.jwt = accountData;
+    res.locals.accountData = accountData;
+    res.locals.loggedin = true;
+    return next();
+  });
+};
 
 
 /* ****************************************
- *  Check Login
+* Redirects with flash when not authorized
+**************************************** */
+Util.checkAccountType = (req, res, next) => {
+  const role = req.jwt?.account_type || res.locals?.accountData?.account_type;
+  if (role === "Employee" || role === "Admin") return next();
+
+  req.flash("notice", "You do not have permission to access that page.");
+  return res.redirect("/account/login");
+};
+
+
+/* ****************************************
+*  On failure: deliver the login view with a message
+**************************************** */
+Util.requireEmployeeOrAdmin = async (req, res, next) => {
+  const role =
+    (req.jwt && req.jwt.account_type) ||
+    (res.locals.accountData && res.locals.accountData.account_type);
+
+  if (role === "Employee" || role === "Admin") return next();
+
+  try {
+    const nav = await Util.getNav();
+    return res.status(401).render("account/login", {
+      title: "Login",
+      nav,
+      notice: "You must be Employee or Admin to access Inventory Management."
+    });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+/* ****************************************
+ *  Check Login 
  * ************************************ */
- Util.checkLogin = (req, res, next) => {
-  if (res.locals.loggedin) {
-    next()
-  } else {
-    req.flash("notice", "Please log in.")
-    return res.redirect("/account/login")
-   }
-}
-    
+Util.checkLogin = (req, res, next) => {
+  if (res.locals.loggedin) return next();
+  req.flash("notice", "Please log in.");
+  return res.redirect("/account/login");
+};
+
 module.exports = Util;
 
 

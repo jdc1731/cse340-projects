@@ -1,16 +1,19 @@
 <h1><%= title %></h1>
 
-<!-- Flash messages  -->
+<!-- Flash messages -->
 <% if (typeof messages === "function") { %>
-<div class="flash"><%- messages() %></div>
-<% } %> <% if (typeof errors !== "undefined" && errors.length) { %>
-<div class="form-errors">
-  <ul>
-    <% errors.forEach(e => { %>
-    <li><%= e.msg %></li>
-    <% }) %>
-  </ul>
-</div>
+  <div class="flash"><%- messages() %></div>
+<% } %>
+
+<!-- Validation errors (safe & single block) -->
+<% if (Array.isArray(errors) && errors.length) { %>
+  <div class="form-errors">
+    <ul>
+      <% errors.forEach(e => { %>
+        <li><%= e.msg %></li>
+      <% }) %>
+    </ul>
+  </div>
 <% } %>
 
 <div class="auth-card">
@@ -23,12 +26,12 @@
         type="email"
         autocomplete="email"
         required
-        value="<%= locals.account_email %>"
+        value="<%= typeof account_email !== 'undefined' ? account_email : '' %>"
       />
     </div>
 
     <div class="form-row">
-      + <label for="login_password">Password</label>
+      <label for="login_password">Password</label>
       <input
         id="login_password"
         name="account_password"
@@ -46,3 +49,4 @@
     <a href="/account/register">Register here</a>.
   </p>
 </div>
+

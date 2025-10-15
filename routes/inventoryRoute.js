@@ -2,56 +2,53 @@
 const express = require("express")
 const router = new express.Router() 
 const invController = require("../controllers/invController")
-const utilities = require('../utilities'); 
-const invValidate = require("../utilities/inventory-validation") 
+const utilities = require("../utilities")
+const invValidate = require("../utilities/inventory-validation")
 
-router.get("/", utilities.checkLogin, utilities.checkAccountType, utilities.handleErrors(invController.buildManagement));
+/**
+ * ADMIN-ONLY 
+ */
+router.get("/", utilities.requireEmployeeOrAdmin, utilities.handleErrors(invController.buildManagement))
 
-router.get("/add-classification", utilities.checkLogin,
-  utilities.checkAccountType, utilities.handleErrors(invController.buildAddClassification));
+router.get("/add-classification", utilities.requireEmployeeOrAdmin, utilities.handleErrors(invController.buildAddClassification))
 
-router.post("/add-classification", utilities.checkLogin,
-  utilities.checkAccountType, invValidate.classificationRules(), invValidate.checkClassificationData, utilities.handleErrors(invController.addClassification));
+router.post("/add-classification", utilities.requireEmployeeOrAdmin, invValidate.classificationRules(), invValidate.checkClassificationData, utilities.handleErrors(invController.addClassification))
 
-// Route to build inventory by classification view
-router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId));
-
-
-// Route to build inventory detail view
-router.get('/detail/:invId', utilities.handleErrors(invController.buildByInvId));
-
-// Route to intentionally trigger a 500 error
-router.get(
-  "/error/boom",
-  utilities.handleErrors(invController.triggerServerError)
-);
-
-router.get("/add-inventory", utilities.checkLogin,utilities.checkAccountType, utilities.handleErrors(invController.buildAddInventory));
-
-router.get("/getInventory/:classification_id", utilities.checkLogin,
-  utilities.checkAccountType, utilities.handleErrors(invController.getInventoryJSON))
+router.get("/add-inventory", utilities.requireEmployeeOrAdmin, utilities.handleErrors(invController.buildAddInventory))
 
 router.post(
-  "/add-inventory", utilities.checkLogin,
-  utilities.checkAccountType, 
+  "/add-inventory",
+  utilities.requireEmployeeOrAdmin,
   invValidate.inventoryRules(),
   invValidate.checkInventoryData,
   utilities.handleErrors(invController.addInventory)
-)
+);
 
-router.get("/edit/:inv_id", utilities.checkLogin, utilities.checkAccountType, utilities.handleErrors(invController.buildEditInventory));
+router.get("/getInventory/:classification_id", utilities.requireEmployeeOrAdmin, utilities.handleErrors(invController.getInventoryJSON))
 
-router.post("/edit-inventory",
-   utilities.checkLogin, utilities.checkAccountType, invValidate.inventoryRules(), invValidate.checkUpdateData, utilities.handleErrors(invController.updateInventory))
+router.get("/edit/:inv_id", utilities.requireEmployeeOrAdmin, utilities.handleErrors(invController.buildEditInventory))
 
-  // Route to delete inventory item
-router.get("/delete/:inv_id", utilities.checkLogin, utilities.checkAccountType, utilities.handleErrors(invController.buildDeleteInventory));
+router.post("/edit-inventory", utilities.requireEmployeeOrAdmin, invValidate.inventoryRules(), invValidate.checkUpdateData, utilities.handleErrors(invController.updateInventory))
 
-router.post("/delete-inventory", utilities.checkLogin, utilities.checkAccountType, utilities.handleErrors(invController.deleteInventory));
+router.get("/delete/:inv_id", utilities.requireEmployeeOrAdmin, utilities.handleErrors(invController.buildDeleteInventory))
+
+router.post("/delete-inventory",   utilities.requireEmployeeOrAdmin, utilities.handleErrors(invController.deleteInventory))
+
+/**
+ * Classification list & vehicle detail must be visible to visitors.
+ */
+router.get("/type/:classificationId", utilities.handleErrors(invController.buildByClassificationId))
+
+router.get("/detail/:invId",          utilities.handleErrors(invController.buildByInvId))
+
+/**
+ * Utilities / test route 
+ */
+router.get("/error/boom", utilities.handleErrors(invController.triggerServerError))
 
 router.get("/flash-test", (req, res) => {
-  req.flash("notice", "Flash wiring works!");
-  req.session.save(() => res.redirect("/inv/"));
-});
+  req.flash("notice", "Flash wiring works!")
+  req.session.save(() => res.redirect("/inv/"))
+})
 
-module.exports = router;
+module.exports = router

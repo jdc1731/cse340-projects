@@ -47,7 +47,8 @@ invCont.addClassification = async function (req, res, next) {
   const result = await invModel.addClassification(classification_name.trim())
 
   if (result && result.rowCount === 1) {
-  req.flash("notice", `Added classification: ${classification_name.trim()}`)
+    req.flash("notice", `Added classification: ${classification_name.trim()}`)
+    
   const freshNav = await utilities.getNav()
   const classificationSelect = await utilities.buildClassificationList()
   return res.status(201).render("inventory/management", {
@@ -247,40 +248,57 @@ invCont.getInventoryJSON = async (req, res, next) => {
     next(new Error("No data returned"))
   }
 
+
 // **************************************
 // Build Edit Inventory view
-// controllers/invController.js
 // **************************************
 invCont.buildEditInventory = async function (req, res, next) {
-  const inv_id = parseInt(req.params.inv_id, 10)
-  const vehicle = await invModel.getVehicleById(inv_id)
-  const nav = await utilities.getNav()
-  const classificationList = await utilities.buildClassificationList(vehicle.classification_id)
+  try {
+    const inv_id = parseInt(req.params.inv_id, 10)
+    if (!Number.isInteger(inv_id)) {
+      const err = new Error("Invalid vehicle id")
+      err.status = 400
+      return next(err)
+    }
 
-  return res.render("inventory/edit-inventory", {
-    title: `Edit ${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`,
-    nav,
-    classificationList,         
-    errors: null,
-    inv_id: vehicle.inv_id,
-    inv_make: vehicle.inv_make,
-    inv_model: vehicle.inv_model,
-    inv_year: vehicle.inv_year,
-    inv_description: vehicle.inv_description,
-    inv_image: vehicle.inv_image,
-    inv_thumbnail: vehicle.inv_thumbnail,
-    inv_price: vehicle.inv_price,
-    inv_miles: vehicle.inv_miles,
-    inv_color: vehicle.inv_color,
-    classification_id: vehicle.classification_id,
-  })
+    const vehicle = await invModel.getVehicleById(inv_id)
+    if (!vehicle) {
+      req.flash("notice", "Vehicle not found.")
+      return res.redirect("/inv")
+    }
+
+    const nav = await utilities.getNav()
+    const classificationList = await utilities.buildClassificationList(vehicle.classification_id)
+
+    return res.render("inventory/edit-inventory", {
+      title: `Edit ${vehicle.inv_year} ${vehicle.inv_make} ${vehicle.inv_model}`,
+      nav,
+      classificationList,
+      errors: [],
+
+      // sticky fields
+      inv_id: vehicle.inv_id,
+      inv_make: vehicle.inv_make,
+      inv_model: vehicle.inv_model,
+      inv_year: vehicle.inv_year,
+      inv_description: vehicle.inv_description,
+      inv_image: vehicle.inv_image,
+      inv_thumbnail: vehicle.inv_thumbnail,
+      inv_price: vehicle.inv_price,
+      inv_miles: vehicle.inv_miles,
+      inv_color: vehicle.inv_color,
+      classification_id: vehicle.classification_id,
+    })
+  } catch (err) {
+    return next(err)
+  }
 }
-
 
 invCont.updateInventory = async function (req, res, next) {
   try {
-    const nav = await utilities.getNav()
-    const {
+    const nav = await utilities.getNav();
+
+    let {
       classification_id,
       inv_id,
       inv_make,
@@ -292,8 +310,18 @@ invCont.updateInventory = async function (req, res, next) {
       inv_price,
       inv_miles,
       inv_color,
-    } = req.body
+    } = req.body;
 
+    inv_id = Number.parseInt(inv_id, 10);
+    classification_id = Number.parseInt(classification_id, 10);
+
+    // If the hidden id is missing/bad, bail out nicely
+    if (!Number.isInteger(inv_id)) {
+      req.flash("notice", "Invalid vehicle id for update.");
+      return res.redirect("/inv");
+    }
+
+    // Ask the MODEL to perform the UPDATE
     const result = await invModel.updateInventory({
       inv_id,
       inv_make,
@@ -306,19 +334,32 @@ invCont.updateInventory = async function (req, res, next) {
       inv_miles,
       inv_color,
       classification_id,
-    })
+    });
 
-    if (result && result.inv_id) {
-      req.flash("notice", `The ${inv_year} ${inv_make} ${inv_model} was successfully updated.`)
-      return req.session.save(() => res.redirect("/inv/"))
+    // Did the update work?
+    const rowCount = typeof result?.rowCount === "number" ? result.rowCount : undefined;
+    const rowsLen  = Array.isArray(result?.rows) ? result.rows.length : undefined;
+    const ok =
+      (rowCount >= 1) ||
+      (rowsLen >= 1) ||
+      (result && result.inv_id) ||
+      result === true;
 
+    if (ok) {
+      req.flash("notice", `The ${inv_year} ${inv_make} ${inv_model} was successfully updated.`);
+      return res.redirect("/inv"); 
+    }
+    // Nothing was changed, re-show the edit form with a message
+    if (rowCount === 0) {
+      req.flash("notice", "No changes were made.");
+      return res.redirect("/inv");
     }
 
-    const classificationList = await utilities.buildClassificationList(classification_id)
+    const classificationList = await utilities.buildClassificationList(classification_id);
     return res.status(400).render("inventory/edit-inventory", {
       title: `Edit ${inv_year} ${inv_make} ${inv_model}`,
       nav,
-      classificationList,             
+      classificationList,
       errors: [{ msg: "Update failed. Please try again." }],
       inv_id,
       inv_make,
@@ -331,12 +372,11 @@ invCont.updateInventory = async function (req, res, next) {
       inv_miles,
       inv_color,
       classification_id,
-    })
+    });
   } catch (err) {
-    return next(err)
+    return next(err);
   }
-}
-
+};
 
 // **************************************
 // Build Delete Confirmation view

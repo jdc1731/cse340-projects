@@ -1,18 +1,16 @@
 <h1><%= title %></h1>
 
-<%  %>
-<% if (typeof messages === "function") { %>
-  <div class="flash"><%- messages() %></div>
-<% } %>
+<% const user = accountData || {}; %>
 
-<%  %>
-<% if (typeof errors !== "undefined" && errors && errors.length) { %>
-  <ul class="errors">
-    <% errors.forEach(err => { %>
-      <li><%= err.msg %></li>
-    <% }) %>
-  </ul>
-<% } %>
+<h2>Welcome <%= user.account_firstname %></h2>
 
-<p>You’re logged in.</p>
+<p>
+  <a href="/account/update/<%= user.account_id %>">Update account information</a>
+</p>
+
+<!-- Only for Employee/Admin -->
+<% if (user.account_type === 'Employee' || user.account_type === 'Admin') { %>
+  <h3>Inventory Management</h3>
+  <p><a href="/inv">Go to Inventory Management</a></p>
+<% } %>
 

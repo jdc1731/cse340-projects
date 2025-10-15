@@ -2,7 +2,7 @@
  * This server.js file is the primary file of the 
  * application. It is used to control the project.
  *******************************************/
-
+const env = require("dotenv").config()
 const baseController = require("./controllers/baseController")
 
 const utilities = require('./utilities');
@@ -16,7 +16,6 @@ const cookieParser = require("cookie-parser")
  *************************/
 const express = require("express")
 const expressLayouts = require("express-ejs-layouts")
-const env = require("dotenv").config()
 const app = express()
 const static = require("./routes/static")
 const inventoryRoute = require("./routes/inventoryRoute")
@@ -52,6 +51,21 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true })) 
 
 app.use(cookieParser())
+const jwt = require('jsonwebtoken');
+
+app.use(function augmentLocalsFromJWT(req, res, next) {
+  const token = req.cookies?.jwt;
+   if (!token) return next();
+
+  try {
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    res.locals.loggedin = true;
+    res.locals.accountData = payload; 
+    req.jwt = payload;                 
+  } catch {
+  }
+  next();
+});
 
 // Express Message Middleware
 app.use(require('connect-flash')())
@@ -67,7 +81,7 @@ app.use(utilities.checkJWTToken)
  *************************/
 app.set("view engine", "ejs")
 app.use(expressLayouts)
-app.set("layout", "layouts/layout") // not at views root
+app.set("layout", "layouts/layout")
 
 /* ***********************
  * Routes

@@ -610,10 +610,27 @@ img {
 
 /* flash message */
 
-.flash { padding: 0.75rem 1rem; margin: 0.5rem 0; border-radius: 6px; }
-.flash-success { background: #e9f7ef; border: 1px solid #2ecc71; }
-.flash-notice  { background: #eef5ff; border: 1px solid #4c8bf5; }
-.flash-error   { background: #fdecea; border: 1px solid #e74c3c; }
+.flash { 
+  padding: 0.75rem 1rem; 
+  margin: 0.5rem 0; 
+  border-radius: 6px; 
+}
+.flash-success { 
+  background: #e9f7ef; 
+  border: 1px solid #2ecc71;
+ }
+.flash-notice  { 
+  background: #eef5ff;
+   border: 1px solid #4c8bf5; 
+  }
+.flash-error   { 
+  background: #fdecea;
+   border: 1px solid #e74c3c;
+   }
+
+li {
+  list-style: none;
+}
 
 
 @media screen and (min-width: 700px) {
