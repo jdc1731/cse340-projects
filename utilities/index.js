@@ -170,24 +170,17 @@ Util.checkAccountType = (req, res, next) => {
 /* ****************************************
 *  On failure: deliver the login view with a message
 **************************************** */
-Util.requireEmployeeOrAdmin = async (req, res, next) => {
+Util.requireEmployeeOrAdmin = (req, res, next) => {
   const role =
     (req.jwt && req.jwt.account_type) ||
     (res.locals.accountData && res.locals.accountData.account_type);
 
   if (role === "Employee" || role === "Admin") return next();
 
-  try {
-    const nav = await Util.getNav();
-    return res.status(401).render("account/login", {
-      title: "Login",
-      nav,
-      notice: "You must be Employee or Admin to access Inventory Management."
-    });
-  } catch (err) {
-    return next(err);
-  }
+  req.flash("notice", "You must be Employee or Admin to access Inventory Management.");
+  return res.redirect("/account/login");
 };
+
 
 /* ****************************************
  *  Check Login 
