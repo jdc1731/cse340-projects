@@ -1,5 +1,25 @@
 <h1><%= title %></h1>
 
+<h2>Classifications</h2>
+
+<% const _classes = Array.isArray(locals.classes) ? locals.classes : []; %>
+
+<% if (_classes.length) { %>
+  <ul class="class-list">
+    <% _classes.forEach(c => { %>
+      <li>
+        <strong><%= c.classification_name %></strong>
+        [ <a href="/inv/edit-classification/<%= c.classification_id %>">Edit</a> |
+          <a href="/inv/delete-classification/<%= c.classification_id %>">Delete</a> ]
+      </li>
+    <% }) %>
+  </ul>
+<% } else { %>
+  <p>No classifications found.</p>
+<% } %>
+
+
+
 <% /* Flash messages (success/failure) */ %>
 <% if (typeof messages === "function") { %>
   <div class="flash"><%- messages('notice') %></div>

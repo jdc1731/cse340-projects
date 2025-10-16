@@ -2,6 +2,7 @@
 const express = require("express")
 const router = new express.Router() 
 const invController = require("../controllers/invController")
+
 const utilities = require("../utilities")
 const invValidate = require("../utilities/inventory-validation")
 
@@ -32,7 +33,36 @@ router.post("/edit-inventory", utilities.requireEmployeeOrAdmin, invValidate.inv
 
 router.get("/delete/:inv_id", utilities.requireEmployeeOrAdmin, utilities.handleErrors(invController.buildDeleteInventory))
 
-router.post("/delete-inventory",   utilities.requireEmployeeOrAdmin, utilities.handleErrors(invController.deleteInventory))
+router.post("/delete-inventory", utilities.requireEmployeeOrAdmin, utilities.handleErrors(invController.deleteInventory))
+
+// EDIT classification (form)
+router.get(
+  "/edit-classification/:classification_id",
+  utilities.requireEmployeeOrAdmin,
+  utilities.handleErrors(invController.buildEditClassification)
+)
+
+// UPDATE classification (process form)
+router.post(
+  "/update-classification",
+  utilities.requireEmployeeOrAdmin,
+  utilities.handleErrors(invController.updateClassification)
+)
+
+// DELETE classification (confirm view)
+router.get(
+  "/delete-classification/:classification_id",
+  utilities.requireEmployeeOrAdmin,
+  utilities.handleErrors(invController.buildDeleteClassification)
+)
+
+// DELETE classification (process)
+router.post(
+  "/delete-classification",
+  utilities.requireEmployeeOrAdmin,
+  utilities.handleErrors(invController.deleteClassification)
+)
+
 
 /**
  * Classification list & vehicle detail must be visible to visitors.

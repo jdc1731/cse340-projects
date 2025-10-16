@@ -6,9 +6,13 @@
     <div id="wrapper">
       <%- include('../partials/header') %> <%- include('../partials/navigation')%> 
       
-      <% if (typeof messages === 'function') { %>
-      <div class="flash"><%- messages() %></div>
-      <% } %>
+<% if (typeof messages === "function") { %>
+  <div class="flash" style="margin:1rem 0;">
+    <%- messages() %>
+  </div>
+<% } %>
+
+
 
       <main><%- body %></main>
 

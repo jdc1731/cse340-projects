@@ -51,24 +51,18 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true })) 
 
 app.use(cookieParser())
-const jwt = require('jsonwebtoken');
 
-app.use(function augmentLocalsFromJWT(req, res, next) {
-  const token = req.cookies?.jwt;
-   if (!token) return next();
-
-  try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-    res.locals.loggedin = true;
-    res.locals.accountData = payload; 
-    req.jwt = payload;                 
-  } catch {
-  }
-  next();
-});
-
-// Express Message Middleware
+// Make the messages() helper available in views
 app.use(require('connect-flash')())
+
+app.use((req, res, next) => {
+  const notices = req.flash('notice') || []
+  if (notices.length) {
+    notices.forEach(msg => req.flash('success', msg))
+  }
+  next()
+})
+
 app.use((req, res, next) => {
   res.locals.messages = require('express-messages')(req, res)
   next()
@@ -130,3 +124,4 @@ const host = process.env.HOST
 app.listen(port, () => {
   console.log(`app listening on ${host}:${port}`)
 })
+

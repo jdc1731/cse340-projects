@@ -1,0 +1,26 @@
+<h1><%= title %></h1>
+
+<% if (Array.isArray(errors) && errors.length) { %>
+  <div class="form-errors">
+    <ul>
+      <% errors.forEach(e => { %>
+        <li><%= e.msg %></li>
+      <% }) %>
+    </ul>
+  </div>
+<% } %>
+
+<div class="warning-card">
+  <p>
+    You are about to <strong>delete</strong> the classification:
+    <strong><%= classification_name || '(unknown)' %></strong>.
+  </p>
+  <p>This action cannot be undone.</p>
+</div>
+
+<form action="/inv/delete-classification" method="post" class="form-card">
+  <input type="hidden" name="classification_id" value="<%= classification_id %>" />
+
+  <button type="submit" class="btn-danger">Delete</button>
+  <a href="/inv" class="btn-link">Cancel</a>
+</form>
