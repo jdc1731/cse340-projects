@@ -116,7 +116,6 @@ invCont.triggerServerError = async function (req, res, next) {
 
 invCont.buildManagement = async function (req, res, next) {
   try {
-    console.log("peek flash at /inv:", req.session && req.session.flash)
 
     const nav = await utilities.getNav();
     const classificationSelect = await utilities.buildClassificationList(); 
