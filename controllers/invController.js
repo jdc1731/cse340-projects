@@ -330,7 +330,7 @@ invCont.updateInventory = async function (req, res, next) {
       classification_id,
     })
 
-    // Accept common success shapes
+    // Check for ok response
     const ok =
       (result && typeof result.rowCount === "number" && result.rowCount >= 1) ||
       (result && Array.isArray(result.rows) && result.rows.length >= 1) ||
